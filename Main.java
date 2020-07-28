@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.text.*;
 
 /*
-    Clase para la lectura de dato, es una clase auxiliar
+    Clase para la lectura de datos, es una clase auxiliar
 */
 
 class Lectura{
@@ -39,12 +39,12 @@ class Lectura{
         return inputE;
     }
     //Lectura de Datos double
-    public double DatosD(String entrada){
+    public double DatosD(String entrada){//Tenemos el parametro String ya que JOptionPane devuelve String al momento de lectura.
         do{
             try{
                 error = false;
-                inputD = Double.parseDouble(entrada);
-             while((inputD <= 0)){
+                inputD = Double.parseDouble(entrada);//Aqui se hace la conversion a double
+             while((inputD <= 0)){//Validamos para numeros negativos o vacios, siendo representados por el cero
                     JOptionPane.showMessageDialog(null, "No se aceptan numero negativos", "ERROR",JOptionPane.ERROR_MESSAGE);
                     entrada = JOptionPane.showInputDialog(null, "Introduzca un dato correcto");
                  inputD = Integer.parseInt(entrada);
@@ -160,19 +160,21 @@ class Main{
           altura = leer.DatosD(JOptionPane.showInputDialog(" Introduzca la altura"));
 					cl = new Cilindro(altura, radio);
 					ima = new ImageIcon("Cilindro.png");
-					
-          			JOptionPane.showMessageDialog(null,"Area Cilindrica: "+decimal.format(cl.CalcularArea())+"\nVolumen cilindrico: "+decimal.format(cl.CalcularVolumen()),"Cilindro", JOptionPane.QUESTION_MESSAGE,ima);
+
+        	JOptionPane.showMessageDialog(null,"Area Cilindrica: "+decimal.format(cl.CalcularArea())+"\nVolumen cilindrico: "+decimal.format(cl.CalcularVolumen()),"Cilindro", JOptionPane.QUESTION_MESSAGE,ima);
 					
 
       break;
           
       case 3:
-          radio = leer.DatosD(JOptionPane.showInputDialog(" Introduzca el radio"));3
+          radio = leer.DatosD(JOptionPane.showInputDialog(" Introduzca el radio"));
           altura = leer.DatosD(JOptionPane.showInputDialog(" Introduzca la altura"));
 					rInterno = leer.DatosD(JOptionPane.showInputDialog(" Introduzca el radio interno del cilindro"));
+					//Verificar que no se mayor el radio interno
 					ch = new CilindroHueco(rInterno,altura,radio);
 					ima = new ImageIcon("CilindroHueco.png");
-          JOptionPane.showMessageDialog(null,"Longitud cilindro hueco: "+decimal.format(ch.CalcularLong())+"\nVolumen Cilindro Hueco: "+decimal.format(ch.CalcularVolumen()),"Cilindro Hueco", JOptionPane.QUESTION_MESSAGE,ima);
+          
+					JOptionPane.showMessageDialog(null,"Longitud cilindro hueco: "+decimal.format(ch.CalcularLong())+"\nVolumen Cilindro Hueco: "+decimal.format(ch.CalcularVolumen()),"Cilindro Hueco", JOptionPane.QUESTION_MESSAGE,ima);
       break;
 			}
   	}while(seleccion!=0);
