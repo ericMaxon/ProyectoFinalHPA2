@@ -3,6 +3,7 @@
  * Eric Mason 3-747-343
  * Jose Perez 8-961-274 
  * Johann Zimmermann 8-954-1834
+ * Michael Xia 8-944-59
 */
 
 import javax.swing.*;
@@ -11,63 +12,45 @@ import java.text.*;
 /*
     Clase para la lectura de datos, es una clase auxiliar
 */
-
 class Lectura{
-    private int inputE;
     private double inputD;
     private boolean error;
 
-    //Metodo modificable para el momento de lectura de Opciones
-    public int Opcion(String entrada) {
-        do{
-            try{
-                error=false;
-                inputE = Integer.parseInt(entrada);
-                while((inputE <= 0)||(inputE>3)){
-                    JOptionPane.showMessageDialog(null, "Introduzca un dato correcto", "ERROR",JOptionPane.ERROR_MESSAGE);
-                    entrada = JOptionPane.showInputDialog(null, "Introduzca un dato correcto");
-                 inputE = Integer.parseInt(entrada);
-                }
-            
-            } catch(NumberFormatException er){
-                JOptionPane.showMessageDialog(null, "Conversion erronea de datos, pruebe con valores numericos entero", "ERROR",JOptionPane.ERROR_MESSAGE);
-                entrada = JOptionPane.showInputDialog(null, "Introduzca un dato correcto");
-                inputE = Integer.parseInt(entrada);
-            }
-        }while (error);
-        
-        return inputE;
-    }
     //Lectura de Datos double
-    public double DatosD(String entrada){//Tenemos el parametro String ya que JOptionPane devuelve String al momento de lectura.
+		
+    public double DatosD(String entrada, String mensaje){
+		/*
+			* entrada, representa los datos leidos por el JOptionPane
+			* mensaje, representa el mensaje impreso durante la lectura de los datos
+		*/
         do{
             try{
                 error = false;
                 inputD = Double.parseDouble(entrada);//Aqui se hace la conversion a double
              while((inputD <= 0)){//Validamos para numeros negativos o vacios, siendo representados por el cero
                     JOptionPane.showMessageDialog(null, "No se aceptan numero negativos", "ERROR",JOptionPane.ERROR_MESSAGE);
-                    entrada = JOptionPane.showInputDialog(null, "Introduzca un dato correcto");
+                    entrada = JOptionPane.showInputDialog(null, mensaje);
                  inputD = Integer.parseInt(entrada);
                 }
             
             } catch(NumberFormatException er){
                 JOptionPane.showMessageDialog(null, "Conversion erronea de datos, pruebe con valores numericos entero", "ERROR",JOptionPane.ERROR_MESSAGE);
-              entrada = JOptionPane.showInputDialog(null, "Introduzca un dato correcto");
-                inputE = Integer.parseInt(entrada);
+              entrada = JOptionPane.showInputDialog(null,mensaje);
+                inputD = Integer.parseInt(entrada);
             }
         }while (error);
-        
         return inputD;
     }
 }
 
+//Clases de Usuario
 
 class Circulo{
     protected double radio;
 
-        Circulo(double radio){
-            this.radio = radio;
-        }
+    void Asignar(double radio){
+        this.radio=radio;
+    }
 
     public double CalcularLong() { // Metodo que calcula la longitud del circulo
         double longitud;
@@ -84,10 +67,10 @@ class Circulo{
 class Cilindro extends Circulo {
     protected double altura;
 
-        Cilindro(double altura, double radio){
-            super(radio);//Al trabajar con herencia al usar el constructor debemos llamar al constructor base
-            this.altura = altura;
-        }
+    void Asignar(double altura, double radio){
+        super.Asignar(radio);//Por ser sobreescritura de un metodo heredado y queremos mantener su comportamiento pero añadirle algo mas usamos "super", para accedar al comportamiento de ese metodo a sobre escribir// y añadirle algo mas.
+        this.altura = altura;
+    }
 
     public double CalcularArea(){//Esta funcion sobreescribe a la funcion CalcularArea de la clase base
         double area;
@@ -103,11 +86,11 @@ class Cilindro extends Circulo {
 
 class CilindroHueco extends Cilindro{
     private double rInterno;//Radio Interno
-        //Esta clase tiene un constructor largo, ya que hereda muchos atributos, por ende, es necesario llamar su constructor base para asignar los valores heredados
-        CilindroHueco(double rInterno, double altura, double radio){
-            super(altura, radio);
-            this.rInterno = rInterno;
-        }
+    
+    void Asignar(double rInterno, double altura, double radio){
+        super.Asignar(altura,radio);
+        this.rInterno=rInterno;
+    }
 
     public double CalcularLong(){//Funcion que calcula la longitud de un cilindro hueco
         double longitud;
@@ -120,62 +103,78 @@ class CilindroHueco extends Cilindro{
         return volumen;
     }
 }
-
+//Clase principal
 class Main{
   public static void main(String[] args) {
-    Lectura leer = new Lectura ();
-    
+    Lectura leer = new Lectura ();//leer sera el objeto de la clase lectura
     DecimalFormat decimal= new DecimalFormat("####.00");
-    Circulo c; 
-    Cilindro cl ;
+    //Declaracion de objetos
+		Circulo c; 
+    Cilindro cl;
 		CilindroHueco ch;
-		Icon ima; 
-		
-		
-		String[] opciones = {"Circulo","Cilindro","Cilindro Hueco"};
-
-    double radio;
+		//Variables a usar dentro del programa
+		Icon ima;
+		String[] opciones = {"Circulo","Cilindro","Cilindro Hueco"};//Para el cuadro de opciones.
+    
+		double radio;
     double rInterno;
     double altura;
-    int seleccion=0;
 
+    int seleccion=0;//Variable usada para el momento de la obtencion de opciones.
+    String mensaje;//Variable es para el momento de la impresion de los mensajes de lectura.
+
+// Usamos un do el cual controle la seleccion de las figuras, para luego pedir los valores necesarios dependiendo de la formula que se requiera.
 	do{
-    seleccion = JOptionPane.showOptionDialog(null,"Que forma geometrica desea evaluar","Cuerpo Redondos",
+    seleccion = JOptionPane.showOptionDialog(null,"Que forma geometrica desea evaluar","Cuerpos Redondos",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, opciones, opciones[0]);
 
     seleccion+=1;
       switch(seleccion){
+				//Para crear el objeto del circulo
         case 1:
-    			radio = leer.DatosD(JOptionPane.showInputDialog(" Introduzca el radio"));
-					c = new Circulo(radio);
-   				ima = new ImageIcon("Circulo.png");
+          mensaje=" Introduzca el radio";
+    			radio = leer.DatosD(JOptionPane.showInputDialog(mensaje),mensaje);
+					c = new Circulo();
+					c.Asignar(radio);
+
+   				ima = new ImageIcon(Main.class.getResource("Circulo.png"));
    				
 		  		JOptionPane.showMessageDialog(null,"Longitud circular: "+decimal.format(c.CalcularLong())+"\nArea Circular: "+decimal.format(c.CalcularArea()),"Circulo",JOptionPane.QUESTION_MESSAGE, ima);
-		  		
+     		break;
+
+    		case 2:
+          mensaje= " Introduzca el radio";
+          radio = leer.DatosD(JOptionPane.showInputDialog(mensaje), mensaje);
+          mensaje=" Introduzca la altura";
+          altura = leer.DatosD(JOptionPane.showInputDialog(mensaje), mensaje);
+					cl = new Cilindro();
+          cl.Asignar(altura, radio);
           
-     break;
-
-      case 2:
-          radio = leer.DatosD(JOptionPane.showInputDialog(" Introduzca el radio"));
-          altura = leer.DatosD(JOptionPane.showInputDialog(" Introduzca la altura"));
-					cl = new Cilindro(altura, radio);
-					ima = new ImageIcon("Cilindro.png");
-
-        	JOptionPane.showMessageDialog(null,"Area Cilindrica: "+decimal.format(cl.CalcularArea())+"\nVolumen cilindrico: "+decimal.format(cl.CalcularVolumen()),"Cilindro", JOptionPane.QUESTION_MESSAGE,ima);
+					ima = new ImageIcon(Main.class.getResource("Cilindro.png"));
 					
-
-      break;
+        	JOptionPane.showMessageDialog(null,"Area Cilindrica: "+decimal.format(cl.CalcularArea())+"\nVolumen cilindrico: "+decimal.format(cl.CalcularVolumen()),"Cilindro", JOptionPane.QUESTION_MESSAGE,ima);
+      	break;
           
-      case 3:
-          radio = leer.DatosD(JOptionPane.showInputDialog(" Introduzca el radio"));
-          altura = leer.DatosD(JOptionPane.showInputDialog(" Introduzca la altura"));
-					rInterno = leer.DatosD(JOptionPane.showInputDialog(" Introduzca el radio interno del cilindro"));
-					//Verificar que no se mayor el radio interno
-					ch = new CilindroHueco(rInterno,altura,radio);
-					ima = new ImageIcon("CilindroHueco.png");
+      	case 3:
+          mensaje= " Introduzca el radio";
+          radio = leer.DatosD(JOptionPane.showInputDialog(mensaje), mensaje);
+
+          mensaje=" Introduzca la altura";
+          altura = leer.DatosD(JOptionPane.showInputDialog(mensaje), mensaje);
+
+          mensaje= " Introduzca el radio interno del cilindro";
+					rInterno = leer.DatosD(JOptionPane.showInputDialog(mensaje), mensaje);
+          
+						while(rInterno>radio){
+								JOptionPane.showMessageDialog(null,"No existe cilindro con radio interno mayor que el externo","Error",JOptionPane.ERROR_MESSAGE);
+								rInterno = leer.DatosD(JOptionPane.showInputDialog(" Vuelva introducir el radio interno del cilindro"),mensaje);
+						}
+					ch = new CilindroHueco();
+					ch.Asignar(rInterno, altura, radio);
+					ima = new ImageIcon(Main.class.getResource("CilindroHueco.png"));
           
 					JOptionPane.showMessageDialog(null,"Longitud cilindro hueco: "+decimal.format(ch.CalcularLong())+"\nVolumen Cilindro Hueco: "+decimal.format(ch.CalcularVolumen()),"Cilindro Hueco", JOptionPane.QUESTION_MESSAGE,ima);
-      break;
+      	break;
 			}
   	}while(seleccion!=0);
 	}
